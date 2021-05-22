@@ -10,14 +10,13 @@ import MBCircleProgressBar
 import Combine
 
 struct ContentView: View {
-//    @State private var cancellable: AnyCancellable?
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @ObservedObject var progressModel = MBCircleProgressModel(progressColor: Color.red, emptyLineColor: Color.gray)
     var body: some View {
         MBCircleProgressView(data: progressModel)
+            .frame(width: 200, height: 200)
             .onAppear {
                 withAnimation {
-//                    progressModel.value = 40
                     progressModel.maxValue = 100
                 }
             }
@@ -28,7 +27,6 @@ struct ContentView: View {
                         progressModel.value = 0
                     }
                 }
-//            progressModel.maxValue = 100
         }
     }
 }
