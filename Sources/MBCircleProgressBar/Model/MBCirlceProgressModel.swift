@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 public class MBCircleProgressModel: ObservableObject {
-    @Published public var value: CGFloat = 0
-    @Published public var maxValue: CGFloat = 0
+    @Published var value: CGFloat = 0
+    @Published var maxValue: CGFloat = 0
     @Published var width: CGFloat
 //    @Published var showValueString: Bool
 //    @Published var showUnitString: Bool
@@ -35,6 +35,9 @@ public class MBCircleProgressModel: ObservableObject {
     var progress: CGFloat {
         if maxValue == 0 { return 0.0 }
         else { return value / maxValue }
+    }
+    public var isCompleted: Bool {
+        return value == maxValue
     }
     
     public init(
@@ -93,6 +96,19 @@ public class MBCircleProgressModel: ObservableObject {
 //        self.emptyCapType = emptyCapType
 //        self.textOffset = textOffset
 //    }
+
+    public func updateValue(value: CGFloat, maxValue: CGFloat) {
+        withAnimation {
+            self.value = value
+            self.maxValue = maxValue
+        }
+    }
+    
+    public func addValue(value: CGFloat) {
+        withAnimation {
+            self.value += value
+        }
+    }
 }
 
 public enum ProgressCapType: CaseIterable {
