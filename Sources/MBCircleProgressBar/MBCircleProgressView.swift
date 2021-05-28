@@ -4,6 +4,10 @@ import SwiftUI
 public struct MBCircleProgressView: View {
     @ObservedObject var progressModel: MBCircleProgressModel
     
+    public init(data progressModel: MBCircleProgressModel) {
+        self.progressModel = progressModel
+    }
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -11,7 +15,7 @@ public struct MBCircleProgressView: View {
                     .stroke(progressModel.emptyLineColor, lineWidth: progressModel.lineWidth)
                     .opacity(0.3)
                 Circle()
-                    .trim(from: 0, to: progressModel.progress)
+                    .trim(from: 0, to: progressModel.percent)
                     .stroke(progressModel.progressColor, lineWidth: progressModel.lineWidth)
                     .rotationEffect(.degrees(-90))
             }
@@ -24,11 +28,7 @@ public struct MBCircleProgressView: View {
             )
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
-        .onDisappear { self.progressModel.updateValue(value: 0, maxValue: 0) }
-    }
-    
-    public init(data progressModel: MBCircleProgressModel) {
-        self.progressModel = progressModel
+        .onDisappear(perform: progressModel.reset)
     }
 }
 

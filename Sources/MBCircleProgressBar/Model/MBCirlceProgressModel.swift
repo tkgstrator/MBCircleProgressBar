@@ -32,14 +32,12 @@ public class MBCircleProgressModel: ObservableObject {
     @Published var emptyLineColor: Color
 //    @Published var emptyCapType: ProgressCapType
 //    @Published var textOffset: CGPoint
-    var progress: CGFloat {
+    var percent: CGFloat {
         if maxValue == 0 { return 0.0 }
         else { return value / maxValue }
     }
-    public var isCompleted: Bool {
-        return value == maxValue
-    }
-    
+    @Published public var isCompleted: Bool = false
+
     public init(
         progressColor: Color,
         emptyLineColor: Color,
@@ -97,17 +95,36 @@ public class MBCircleProgressModel: ObservableObject {
 //        self.textOffset = textOffset
 //    }
 
-    public func updateValue(value: CGFloat, maxValue: CGFloat) {
+    public func configure(maxValue: CGFloat) {
         withAnimation {
-            self.value = value
             self.maxValue = maxValue
         }
     }
     
     public func addValue(value: CGFloat) {
         withAnimation {
-            self.value += value
+            self.value = min(maxValue, self.value + value)
         }
+        
+        if self.value == maxValue {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.isCompleted = true
+            }
+        }
+    }
+    
+    public func changeMode(mode: ProgressModeType) {
+        withAnimation {
+            self.progressColor = .blue
+            self.progressMode = mode
+        }
+    }
+
+    // 初期値に戻す
+    func reset() {
+        self.isCompleted = false
+        self.value = 0
+        self.maxValue = 0
     }
 }
 
@@ -118,7 +135,7 @@ public enum ProgressCapType: CaseIterable {
 }
 
 public enum ProgressModeType: String, CaseIterable {
-    case upload = "Uploading"
-    case download = "Downloading"
-    case compress = "Compressing"
+    case upload     = "Uploading"
+    case download   = "Downloading"
+    case compress   = "Compressing"
 }
